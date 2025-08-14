@@ -1,5 +1,5 @@
 use std::{
-    io::{self, BufRead},
+    io::{self, BufRead, Read},
     process::exit,
 };
 
@@ -8,11 +8,12 @@ fn main() {
     let mut reader = stdin.lock();
     let mut input = String::new();
 
-    reader.read_line(&mut input).unwrap();
+    reader.read_to_string(&mut input).unwrap();
 
-    let string = input.as_bytes();
+    let string = input.trim_end().as_bytes();
 
     let len = string.len();
+
     let mut mismatched_pair = false;
     for i in 0..len / 2 {
         if string[i] != (string[len - i - 1]) {

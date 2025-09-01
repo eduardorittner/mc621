@@ -1,3 +1,56 @@
+use std::{
+    fmt::Debug,
+    io::{self, BufRead, StdinLock},
+    str::FromStr,
+};
+
+fn read_one_number<T: FromStr<Err: Debug>>(stdin: &mut StdinLock) -> T {
+    let mut input = String::new();
+    stdin.read_line(&mut input).unwrap();
+    input.trim_end().parse().unwrap()
+}
+
+fn read_two_numbers<T: FromStr<Err: Debug>>(stdin: &mut StdinLock) -> (T, T) {
+    let mut input = String::new();
+    stdin.read_line(&mut input).unwrap();
+    let input: Vec<_> = input.trim_end().split_ascii_whitespace().collect();
+
+    (input[0].parse().unwrap(), input[1].parse().unwrap())
+}
+
+enum Ops {
+    Inc { lh: usize, rh: usize, inc: i64 },
+    Min { lh: usize, rh: usize },
+}
+
+fn read_ops(stdin: &mut StdinLock) -> Ops {
+    let mut input = String::new();
+
+    stdin.read_line(&mut input).unwrap();
+    let numbers: Vec<_> = input.trim_end().split_ascii_whitespace().collect();
+    if numbers.len() == 2 {
+        let (lh, rh) = (numbers[0].parse().unwrap(), numbers[1].parse().unwrap());
+        Ops::Min { lh, rh }
+    } else {
+        let (lh, rh, inc) = (
+            numbers[0].parse().unwrap(),
+            numbers[1].parse().unwrap(),
+            numbers[2].parse().unwrap(),
+        );
+        Ops::Inc { lh, rh, inc }
+    }
+}
+
+fn read_n_numbers<T: FromStr<Err: Debug>>(stdin: &mut StdinLock, n: usize) -> Vec<T> {
+    let mut input = String::new();
+    stdin.read_line(&mut input).unwrap();
+    input
+        .trim_end()
+        .split_ascii_whitespace()
+        .map(|n| n.parse::<T>().unwrap())
+        .collect()
+}
+
 #[derive(Clone, Copy)]
 struct Node {
     min: i64,
@@ -112,4 +165,17 @@ impl CircularArray {
     }
 }
 
-fn main() {}
+fn main() {
+    let stdin = io::stdin();
+    let mut reader = stdin.lock();
+
+    let n: usize = read_one_number(&mut reader);
+
+    let numbers: Vec<usize> = read_n_numbers(&mut reader, n);
+
+    let ops: usize = read_one_number(&mut reader);
+
+    for _ in 0..ops {
+        let op = read_ops(&mut stdin);
+    }
+}
